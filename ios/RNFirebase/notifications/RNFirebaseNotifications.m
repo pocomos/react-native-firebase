@@ -74,31 +74,33 @@ RCT_EXPORT_MODULE();
     }
 } */
 
+// This is commented  in favor of LeadLink iOS native push notification implementation
+// Check README.md of the repository
 // *******************************************************
 // ** Start AppDelegate methods
 // ** iOS 8/9 Only
 // *******************************************************
-- (void)didReceiveLocalNotification:(nonnull UILocalNotification *)localNotification {
-    if ([self isIOS89]) {
-        NSString *event;
-        if (RCTSharedApplication().applicationState == UIApplicationStateBackground) {
-            event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
-        } else if (RCTSharedApplication().applicationState == UIApplicationStateInactive) {
-            event = NOTIFICATIONS_NOTIFICATION_OPENED;
-        } else {
-            event = NOTIFICATIONS_NOTIFICATION_RECEIVED;
-        }
-
-        NSDictionary *notification = [self parseUILocalNotification:localNotification];
-        if (event == NOTIFICATIONS_NOTIFICATION_OPENED) {
-            notification = @{
-                             @"action": DEFAULT_ACTION,
-                             @"notification": notification
-                             };
-        }
-        [self sendJSEvent:self name:event body:notification];
-    }
-}
+// - (void)didReceiveLocalNotification:(nonnull UILocalNotification *)localNotification {
+//     if ([self isIOS89]) {
+//         NSString *event;
+//         if (RCTSharedApplication().applicationState == UIApplicationStateBackground) {
+//             event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
+//         } else if (RCTSharedApplication().applicationState == UIApplicationStateInactive) {
+//             event = NOTIFICATIONS_NOTIFICATION_OPENED;
+//         } else {
+//             event = NOTIFICATIONS_NOTIFICATION_RECEIVED;
+//         }
+//
+//         NSDictionary *notification = [self parseUILocalNotification:localNotification];
+//         if (event == NOTIFICATIONS_NOTIFICATION_OPENED) {
+//             notification = @{
+//                              @"action": DEFAULT_ACTION,
+//                              @"notification": notification
+//                              };
+//         }
+//         [self sendJSEvent:self name:event body:notification];
+//     }
+// }
 
 RCT_EXPORT_METHOD(complete:(NSString*)handlerKey fetchResult:(UIBackgroundFetchResult)fetchResult) {
     if (handlerKey != nil) {
@@ -116,54 +118,56 @@ RCT_EXPORT_METHOD(complete:(NSString*)handlerKey fetchResult:(UIBackgroundFetchR
     }
 }
 
+// This is commented  in favor of LeadLink iOS native push notification implementation
+// Check README.md of the repository
 // Listen for background messages
-- (void)didReceiveRemoteNotification:(NSDictionary *)userInfo
-              fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    // FCM Data messages come through here if they specify content-available=true
-    // Pass them over to the RNFirebaseMessaging handler instead
-    if (userInfo[@"aps"] && ((NSDictionary*)userInfo[@"aps"]).count == 1 && userInfo[@"aps"][@"content-available"]) {
-        [[RNFirebaseMessaging instance] didReceiveRemoteNotification:userInfo];
-        completionHandler(UIBackgroundFetchResultNoData);
-        return;
-    }
-
-    NSDictionary *notification = [self parseUserInfo:userInfo];
-    NSString *handlerKey = notification[@"notificationId"];
-
-    NSString *event;
-    if (RCTSharedApplication().applicationState == UIApplicationStateBackground) {
-        event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
-    } else if ([self isIOS89]) {
-        if (RCTSharedApplication().applicationState == UIApplicationStateInactive) {
-            event = NOTIFICATIONS_NOTIFICATION_OPENED;
-        } else {
-            event = NOTIFICATIONS_NOTIFICATION_RECEIVED;
-        }
-    } else {
-        // On IOS 10:
-        // - foreground notifications also go through willPresentNotification
-        // - background notification presses also go through didReceiveNotificationResponse
-        // This prevents duplicate messages from hitting the JS app
-        completionHandler(UIBackgroundFetchResultNoData);
-        return;
-    }
-
-    // For onOpened events, we set the default action name as iOS 8/9 has no concept of actions
-    if (event == NOTIFICATIONS_NOTIFICATION_OPENED) {
-        notification = @{
-            @"action": DEFAULT_ACTION,
-            @"notification": notification
-        };
-    }
-
-    if (handlerKey != nil) {
-        fetchCompletionHandlers[handlerKey] = completionHandler;
-    } else {
-        completionHandler(UIBackgroundFetchResultNoData);
-    }
-
-    [self sendJSEvent:self name:event body:notification];
-}
+// - (void)didReceiveRemoteNotification:(NSDictionary *)userInfo
+//               fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+//     // FCM Data messages come through here if they specify content-available=true
+//     // Pass them over to the RNFirebaseMessaging handler instead
+//     if (userInfo[@"aps"] && ((NSDictionary*)userInfo[@"aps"]).count == 1 && userInfo[@"aps"][@"content-available"]) {
+//         [[RNFirebaseMessaging instance] didReceiveRemoteNotification:userInfo];
+//         completionHandler(UIBackgroundFetchResultNoData);
+//         return;
+//     }
+//
+//     NSDictionary *notification = [self parseUserInfo:userInfo];
+//     NSString *handlerKey = notification[@"notificationId"];
+//
+//     NSString *event;
+//     if (RCTSharedApplication().applicationState == UIApplicationStateBackground) {
+//         event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
+//     } else if ([self isIOS89]) {
+//         if (RCTSharedApplication().applicationState == UIApplicationStateInactive) {
+//             event = NOTIFICATIONS_NOTIFICATION_OPENED;
+//         } else {
+//             event = NOTIFICATIONS_NOTIFICATION_RECEIVED;
+//         }
+//     } else {
+//         // On IOS 10:
+//         // - foreground notifications also go through willPresentNotification
+//         // - background notification presses also go through didReceiveNotificationResponse
+//         // This prevents duplicate messages from hitting the JS app
+//         completionHandler(UIBackgroundFetchResultNoData);
+//         return;
+//     }
+//
+//     // For onOpened events, we set the default action name as iOS 8/9 has no concept of actions
+//     if (event == NOTIFICATIONS_NOTIFICATION_OPENED) {
+//         notification = @{
+//             @"action": DEFAULT_ACTION,
+//             @"notification": notification
+//         };
+//     }
+//
+//     if (handlerKey != nil) {
+//         fetchCompletionHandlers[handlerKey] = completionHandler;
+//     } else {
+//         completionHandler(UIBackgroundFetchResultNoData);
+//     }
+//
+//     [self sendJSEvent:self name:event body:notification];
+// }
 
 // *******************************************************
 // ** Finish AppDelegate methods
@@ -174,66 +178,66 @@ RCT_EXPORT_METHOD(complete:(NSString*)handlerKey fetchResult:(UIBackgroundFetchR
 // ** iOS 10+
 // *******************************************************
 
-#if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-// Handle incoming notification messages while app is in the foreground.
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-       willPresentNotification:(UNNotification *)notification
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler NS_AVAILABLE_IOS(10_0) {
-    UNNotificationTrigger *trigger = notification.request.trigger;
-    BOOL isFcm = trigger && [notification.request.trigger class] == [UNPushNotificationTrigger class];
-    BOOL isScheduled = trigger && [notification.request.trigger class] == [UNCalendarNotificationTrigger class];
-
-    NSString *event;
-    UNNotificationPresentationOptions options;
-    NSDictionary *message = [self parseUNNotification:notification];
-
-    if (isFcm || isScheduled) {
-        // If app is in the background
-        if (RCTSharedApplication().applicationState == UIApplicationStateBackground
-            || RCTSharedApplication().applicationState == UIApplicationStateInactive) {
-            // display the notification
-            options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
-            // notification_displayed
-            event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
-        } else {
-            // don't show notification
-            options = UNNotificationPresentationOptionNone;
-            // notification_received
-            event = NOTIFICATIONS_NOTIFICATION_RECEIVED;
-        }
-    } else {
-        // Triggered by `notifications().displayNotification(notification)`
-        // Display the notification
-        options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
-        // notification_displayed
-        event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
-    }
-
-    [self sendJSEvent:self name:event body:message];
-    completionHandler(options);
-}
-
-// Handle notification messages after display notification is tapped by the user.
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-didReceiveNotificationResponse:(UNNotificationResponse *)response
-#if defined(__IPHONE_11_0)
-         withCompletionHandler:(void(^)(void))completionHandler NS_AVAILABLE_IOS(10_0) {
-#else
-         withCompletionHandler:(void(^)())completionHandler NS_AVAILABLE_IOS(10_0) {
-#endif
-     NSDictionary *message = [self parseUNNotificationResponse:response];
-           
-     NSString *handlerKey = message[@"notification"][@"notificationId"];
-
-     [self sendJSEvent:self name:NOTIFICATIONS_NOTIFICATION_OPENED body:message];
-     if (handlerKey != nil) {
-         completionHandlers[handlerKey] = completionHandler;
-     } else {
-         completionHandler();
-     }
-}
-
-#endif
+// #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
+// // Handle incoming notification messages while app is in the foreground.
+// - (void)userNotificationCenter:(UNUserNotificationCenter *)center
+//        willPresentNotification:(UNNotification *)notification
+//          withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler NS_AVAILABLE_IOS(10_0) {
+//     UNNotificationTrigger *trigger = notification.request.trigger;
+//     BOOL isFcm = trigger && [notification.request.trigger class] == [UNPushNotificationTrigger class];
+//     BOOL isScheduled = trigger && [notification.request.trigger class] == [UNCalendarNotificationTrigger class];
+//
+//     NSString *event;
+//     UNNotificationPresentationOptions options;
+//     NSDictionary *message = [self parseUNNotification:notification];
+//
+//     if (isFcm || isScheduled) {
+//         // If app is in the background
+//         if (RCTSharedApplication().applicationState == UIApplicationStateBackground
+//             || RCTSharedApplication().applicationState == UIApplicationStateInactive) {
+//             // display the notification
+//             options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
+//             // notification_displayed
+//             event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
+//         } else {
+//             // don't show notification
+//             options = UNNotificationPresentationOptionNone;
+//             // notification_received
+//             event = NOTIFICATIONS_NOTIFICATION_RECEIVED;
+//         }
+//     } else {
+//         // Triggered by `notifications().displayNotification(notification)`
+//         // Display the notification
+//         options = UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
+//         // notification_displayed
+//         event = NOTIFICATIONS_NOTIFICATION_DISPLAYED;
+//     }
+//
+//     [self sendJSEvent:self name:event body:message];
+//     completionHandler(options);
+// }
+//
+// // Handle notification messages after display notification is tapped by the user.
+// - (void)userNotificationCenter:(UNUserNotificationCenter *)center
+// didReceiveNotificationResponse:(UNNotificationResponse *)response
+// #if defined(__IPHONE_11_0)
+//          withCompletionHandler:(void(^)(void))completionHandler NS_AVAILABLE_IOS(10_0) {
+// #else
+//          withCompletionHandler:(void(^)())completionHandler NS_AVAILABLE_IOS(10_0) {
+// #endif
+//      NSDictionary *message = [self parseUNNotificationResponse:response];
+//
+//      NSString *handlerKey = message[@"notification"][@"notificationId"];
+//
+//      [self sendJSEvent:self name:NOTIFICATIONS_NOTIFICATION_OPENED body:message];
+//      if (handlerKey != nil) {
+//          completionHandlers[handlerKey] = completionHandler;
+//      } else {
+//          completionHandler();
+//      }
+// }
+//
+// #endif
 
 // *******************************************************
 // ** Finish UNUserNotificationCenterDelegate methods

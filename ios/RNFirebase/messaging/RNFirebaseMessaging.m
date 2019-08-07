@@ -65,11 +65,13 @@ RCT_EXPORT_MODULE()
     _permissionResolver = nil;
 }
 
+// This is commented  in favor of LeadLink iOS native push notification implementation
+// Check README.md of the repository
 // Listen for FCM data messages that arrive as a remote notification
-- (void)didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo {
-    NSDictionary *message = [self parseUserInfo:userInfo];
-    [self sendJSEvent:self name:MESSAGING_MESSAGE_RECEIVED body:message];
-}
+// - (void)didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo {
+//     NSDictionary *message = [self parseUserInfo:userInfo];
+//     [self sendJSEvent:self name:MESSAGING_MESSAGE_RECEIVED body:message];
+// }
 
 // *******************************************************
 // ** Finish AppDelegate methods
@@ -87,19 +89,23 @@ RCT_EXPORT_MODULE()
     [self sendJSEvent:self name:MESSAGING_TOKEN_REFRESHED body:fcmToken];
 }
 
+// This is commented  in favor of LeadLink iOS native push notification implementation
+// Check README.md of the repository
 // Listen for data messages in the foreground
-- (void)applicationReceivedRemoteMessage:(nonnull FIRMessagingRemoteMessage *)remoteMessage {
-    NSDictionary *message = [self parseFIRMessagingRemoteMessage:remoteMessage];
-    [self sendJSEvent:self name:MESSAGING_MESSAGE_RECEIVED body:message];
-}
+// - (void)applicationReceivedRemoteMessage:(nonnull FIRMessagingRemoteMessage *)remoteMessage {
+//     NSDictionary *message = [self parseFIRMessagingRemoteMessage:remoteMessage];
+//     [self sendJSEvent:self name:MESSAGING_MESSAGE_RECEIVED body:message];
+// }
 
+// This is commented  in favor of LeadLink iOS native push notification implementation
+// Check README.md of the repository
 // Receive data messages on iOS 10+ directly from FCM (bypassing APNs) when the app is in the foreground.
 // To enable direct data messages, you can set [Messaging messaging].shouldEstablishDirectChannel to YES.
-- (void)messaging:(nonnull FIRMessaging *)messaging
-didReceiveMessage:(nonnull FIRMessagingRemoteMessage *)remoteMessage {
-    NSDictionary *message = [self parseFIRMessagingRemoteMessage:remoteMessage];
-    [self sendJSEvent:self name:MESSAGING_MESSAGE_RECEIVED body:message];
-}
+// - (void)messaging:(nonnull FIRMessaging *)messaging
+// didReceiveMessage:(nonnull FIRMessagingRemoteMessage *)remoteMessage {
+//     NSDictionary *message = [self parseFIRMessagingRemoteMessage:remoteMessage];
+//     [self sendJSEvent:self name:MESSAGING_MESSAGE_RECEIVED body:message];
+// }
 
 // *******************************************************
 // ** Finish FIRMessagingDelegate methods
@@ -275,56 +281,60 @@ RCT_EXPORT_METHOD(jsInitialised:(RCTPromiseResolveBlock)resolve rejecter:(RCTPro
     }
 }
 
-- (NSDictionary*)parseFIRMessagingRemoteMessage:(FIRMessagingRemoteMessage *)remoteMessage {
-    NSDictionary *appData = remoteMessage.appData;
+// This is commented  in favor of LeadLink iOS native push notification implementation
+// Check README.md of the repository
+// - (NSDictionary*)parseFIRMessagingRemoteMessage:(FIRMessagingRemoteMessage *)remoteMessage {
+//     NSDictionary *appData = remoteMessage.appData;
+//
+//     NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
+//     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+//     for (id k1 in appData) {
+//         if ([k1 isEqualToString:@"collapse_key"]) {
+//             message[@"collapseKey"] = appData[@"collapse_key"];
+//         } else if ([k1 isEqualToString:@"from"]) {
+//             message[@"from"] = appData[k1];
+//         } else if ([k1 isEqualToString:@"notification"]) {
+//             // Ignore for messages
+//         } else {
+//             // Assume custom data key
+//             data[k1] = appData[k1];
+//         }
+//     }
+//     message[@"data"] = data;
+//
+//     return message;
+// }
 
-    NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
-    for (id k1 in appData) {
-        if ([k1 isEqualToString:@"collapse_key"]) {
-            message[@"collapseKey"] = appData[@"collapse_key"];
-        } else if ([k1 isEqualToString:@"from"]) {
-            message[@"from"] = appData[k1];
-        } else if ([k1 isEqualToString:@"notification"]) {
-            // Ignore for messages
-        } else {
-            // Assume custom data key
-            data[k1] = appData[k1];
-        }
-    }
-    message[@"data"] = data;
-
-    return message;
-}
-
-- (NSDictionary*)parseUserInfo:(NSDictionary *)userInfo {
-    NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
-
-    for (id k1 in userInfo) {
-        if ([k1 isEqualToString:@"aps"]) {
-            // Ignore notification section
-        } else if ([k1 isEqualToString:@"gcm.message_id"]) {
-            message[@"messageId"] = userInfo[k1];
-        } else if ([k1 isEqualToString:@"google.c.a.ts"]) {
-            message[@"sentTime"] = userInfo[k1];
-        } else if ([k1 isEqualToString:@"gcm.n.e"]
-                   || [k1 isEqualToString:@"gcm.notification.sound2"]
-                   || [k1 isEqualToString:@"google.c.a.c_id"]
-                   || [k1 isEqualToString:@"google.c.a.c_l"]
-                   || [k1 isEqualToString:@"google.c.a.e"]
-                   || [k1 isEqualToString:@"google.c.a.udt"]) {
-            // Ignore known keys
-        } else {
-            // Assume custom data
-            data[k1] = userInfo[k1];
-        }
-    }
-
-    message[@"data"] = data;
-
-    return message;
-}
+// This is commented  in favor of LeadLink iOS native push notification implementation
+// Check README.md of the repository
+// - (NSDictionary*)parseUserInfo:(NSDictionary *)userInfo {
+//     NSMutableDictionary *message = [[NSMutableDictionary alloc] init];
+//     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+//
+//     for (id k1 in userInfo) {
+//         if ([k1 isEqualToString:@"aps"]) {
+//             // Ignore notification section
+//         } else if ([k1 isEqualToString:@"gcm.message_id"]) {
+//             message[@"messageId"] = userInfo[k1];
+//         } else if ([k1 isEqualToString:@"google.c.a.ts"]) {
+//             message[@"sentTime"] = userInfo[k1];
+//         } else if ([k1 isEqualToString:@"gcm.n.e"]
+//                    || [k1 isEqualToString:@"gcm.notification.sound2"]
+//                    || [k1 isEqualToString:@"google.c.a.c_id"]
+//                    || [k1 isEqualToString:@"google.c.a.c_l"]
+//                    || [k1 isEqualToString:@"google.c.a.e"]
+//                    || [k1 isEqualToString:@"google.c.a.udt"]) {
+//             // Ignore known keys
+//         } else {
+//             // Assume custom data
+//             data[k1] = userInfo[k1];
+//         }
+//     }
+//
+//     message[@"data"] = data;
+//
+//     return message;
+// }
 
 - (NSArray<NSString *> *)supportedEvents {
     return @[MESSAGING_MESSAGE_RECEIVED, MESSAGING_TOKEN_REFRESHED];

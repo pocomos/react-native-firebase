@@ -1,3 +1,14 @@
+## It's a fork of the original repository with commenting out some hooks in favor of LeadLink iOS native push notification implementation.
+
+In fact, we just have to comment out some hooks in:
+
+ - `ReactNativeFirebase/ios/RNFirebase/notifications/RNFirebaseNotifications.m`
+ - `ReactNativeFirebase/ios/RNFirebase/messaging/RNFirebaseMessaging.m`
+
+We have to do it to avoid our hooks placed in `LeadLink/ios/LeadLink/AppDelegate.m` are overridden.
+
+---
+
 <p align="center">
   <a href="https://invertase.io/oss/react-native-firebase">
     <img width="180px" src="https://i.imgur.com/JIyBtKW.png"><br/>
